@@ -1,6 +1,6 @@
 {
-  "name": "commit-message-generator",
-  "displayName": "Commit Message Generator",
+  "name": "conventional-commit-ai",
+  "displayName": "Git Commit Wizard",
   "description": "Automatically generate Conventional Commits messages from staged Git diff",
   "version": "0.1.0",
   "publisher": "jiwan-dev",
@@ -25,6 +25,7 @@
     "scm",
     "changelog"
   ],
+  "icon": "images/icon.png",
   "galleryBanner": {
     "color": "#1e1e2e",
     "theme": "dark"

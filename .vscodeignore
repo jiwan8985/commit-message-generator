@@ -1,0 +1,14 @@
+.vscode/**
+.github/**
+src/**
+node_modules/**
+out/maps/**
+**/*.map
+**/*.ts
+!out/**/*.js
+.gitignore
+.vscodeignore
+tsconfig.json
+.eslintrc*
+npm-debug.log
+*.vsix
