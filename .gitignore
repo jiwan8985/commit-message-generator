@@ -1,0 +1,26 @@
+# Compiled output
+out/
+
+# Dependencies
+node_modules/
+
+# VS Code Extension packaging
+*.vsix
+
+# Environment / secrets
+.env
+.env.*
+
+# Logs
+*.log
+npm-debug.log*
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/*
+!.vscode/extensions.json
+!.vscode/launch.json
+!.vscode/tasks.json

@@ -1,0 +1,85 @@
+{
+  "name": "commit-message-generator",
+  "displayName": "Commit Message Generator",
+  "description": "Automatically generate Conventional Commits messages from staged Git diff",
+  "version": "0.1.0",
+  "publisher": "jiwan-dev",
+  "author": {
+    "name": "jiwan",
+    "email": "jiwan8985@gmail.com"
+  },
+  "license": "MIT",
+  "homepage": "https://github.com/jiwan8985/commit-message-generator#readme",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jiwan8985/commit-message-generator.git"
+  },
+  "bugs": {
+    "url": "https://github.com/jiwan8985/commit-message-generator/issues"
+  },
+  "keywords": [
+    "git",
+    "commit",
+    "conventional commits",
+    "commit message",
+    "scm",
+    "changelog"
+  ],
+  "galleryBanner": {
+    "color": "#1e1e2e",
+    "theme": "dark"
+  },
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "categories": ["Other"],
+  "activationEvents": [],
+  "main": "./out/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "commitMessageGenerator.generate",
+        "title": "Generate Commit Message",
+        "icon": "$(sparkle)"
+      }
+    ],
+    "menus": {
+      "scm/title": [
+        {
+          "command": "commitMessageGenerator.generate",
+          "group": "navigation",
+          "when": "scmProvider == git"
+        }
+      ]
+    },
+    "configuration": {
+      "title": "Commit Message Generator",
+      "properties": {
+        "commitMessageGenerator.groqApiKey": {
+          "type": "string",
+          "default": "",
+          "description": "Groq API key for AI-powered commit message generation (optional)"
+        },
+        "commitMessageGenerator.useAI": {
+          "type": "boolean",
+          "default": false,
+          "description": "Use AI (Groq) for commit message generation instead of rule-based analysis"
+        }
+      }
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "lint": "eslint src --ext ts"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "@types/vscode": "^1.85.0",
+    "@typescript-eslint/eslint-plugin": "^6.0.0",
+    "@typescript-eslint/parser": "^6.0.0",
+    "eslint": "^8.0.0",
+    "typescript": "^5.3.0"
+  }
+}
