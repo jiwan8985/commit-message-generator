@@ -1,8 +1,8 @@
 {
   "name": "conventional-commit-ai",
   "displayName": "Git Commit Wizard",
-  "description": "Automatically generate Conventional Commits messages from staged Git diff",
-  "version": "0.1.0",
+  "description": "AI-powered Conventional Commits generator — supports Anthropic, OpenAI, Groq, Ollama, and rule-based analysis",
+  "version": "0.2.0",
   "publisher": "jiwan-dev",
   "author": {
     "name": "jiwan",
@@ -22,8 +22,14 @@
     "commit",
     "conventional commits",
     "commit message",
+    "ai",
     "scm",
-    "changelog"
+    "changelog",
+    "gitmoji",
+    "anthropic",
+    "openai",
+    "groq",
+    "ollama"
   ],
   "icon": "images/icon.png",
   "galleryBanner": {
@@ -39,40 +45,140 @@
   "contributes": {
     "commands": [
       {
-        "command": "commitMessageGenerator.generate",
-        "title": "Generate Commit Message",
+        "command": "commitWizard.generate",
+        "title": "Git Commit Wizard: Generate Message",
         "icon": "$(sparkle)"
+      },
+      {
+        "command": "commitWizard.configure",
+        "title": "Git Commit Wizard: Configure AI Provider"
+      }
+    ],
+    "keybindings": [
+      {
+        "command": "commitWizard.generate",
+        "key": "ctrl+alt+enter",
+        "mac": "cmd+alt+enter",
+        "when": "scmProvider == git"
       }
     ],
     "menus": {
       "scm/title": [
         {
-          "command": "commitMessageGenerator.generate",
+          "command": "commitWizard.generate",
           "group": "navigation",
           "when": "scmProvider == git"
         }
       ]
     },
     "configuration": {
-      "title": "Commit Message Generator",
+      "title": "Git Commit Wizard",
       "properties": {
-        "commitMessageGenerator.groqApiKey": {
+        "commitWizard.aiProvider": {
+          "type": "string",
+          "enum": ["anthropic", "openai", "groq", "ollama", "rule-based"],
+          "enumDescriptions": [
+            "Anthropic Claude (requires API key)",
+            "OpenAI GPT (requires API key, also works with compatible APIs)",
+            "Groq — fast inference, free tier available",
+            "Ollama — local model, free & private",
+            "Rule-based — no API key needed, works offline"
+          ],
+          "default": "rule-based",
+          "markdownDescription": "AI provider for commit message generation. Set to `rule-based` for offline use."
+        },
+        "commitWizard.anthropicApiKey": {
           "type": "string",
           "default": "",
-          "description": "Groq API key for AI-powered commit message generation (optional)"
+          "markdownDescription": "Anthropic API key. Get one at [console.anthropic.com](https://console.anthropic.com/)."
         },
-        "commitMessageGenerator.useAI": {
+        "commitWizard.anthropicModel": {
+          "type": "string",
+          "default": "claude-3-5-haiku-20241022",
+          "enum": [
+            "claude-3-5-haiku-20241022",
+            "claude-3-5-sonnet-20241022",
+            "claude-3-opus-20240229"
+          ],
+          "description": "Anthropic model to use. Haiku is fastest and cheapest."
+        },
+        "commitWizard.openaiApiKey": {
+          "type": "string",
+          "default": "",
+          "markdownDescription": "OpenAI API key. Also works with OpenAI-compatible APIs (Azure, Together AI, etc.)."
+        },
+        "commitWizard.openaiModel": {
+          "type": "string",
+          "default": "gpt-4o-mini",
+          "description": "OpenAI model to use. gpt-4o-mini is fast and cost-effective."
+        },
+        "commitWizard.openaiBaseUrl": {
+          "type": "string",
+          "default": "https://api.openai.com/v1",
+          "description": "OpenAI API base URL. Change for compatible APIs (Azure, Together AI, local servers)."
+        },
+        "commitWizard.groqApiKey": {
+          "type": "string",
+          "default": "",
+          "markdownDescription": "Groq API key. Get one free at [console.groq.com](https://console.groq.com/)."
+        },
+        "commitWizard.groqModel": {
+          "type": "string",
+          "default": "llama-3.1-8b-instant",
+          "enum": [
+            "llama-3.1-8b-instant",
+            "llama-3.3-70b-versatile",
+            "mixtral-8x7b-32768"
+          ],
+          "description": "Groq model to use. llama-3.1-8b-instant is the fastest."
+        },
+        "commitWizard.ollamaUrl": {
+          "type": "string",
+          "default": "http://localhost:11434",
+          "description": "Ollama server URL for local AI generation."
+        },
+        "commitWizard.ollamaModel": {
+          "type": "string",
+          "default": "llama3.2",
+          "description": "Ollama model name. Run `ollama pull <model>` first."
+        },
+        "commitWizard.suggestionCount": {
+          "type": "number",
+          "default": 3,
+          "minimum": 1,
+          "maximum": 5,
+          "description": "Number of commit message suggestions to generate (AI providers only)."
+        },
+        "commitWizard.language": {
+          "type": "string",
+          "default": "English",
+          "description": "Language for generated commit messages (e.g. Korean, Japanese, English)."
+        },
+        "commitWizard.useEmoji": {
           "type": "boolean",
           "default": false,
-          "description": "Use AI (Groq) for commit message generation instead of rule-based analysis"
+          "markdownDescription": "Add [gitmoji](https://gitmoji.dev/) emoji to commit messages (e.g. `✨ feat: ...`)."
+        },
+        "commitWizard.maxSubjectLength": {
+          "type": "number",
+          "default": 72,
+          "minimum": 50,
+          "maximum": 120,
+          "description": "Maximum character length for the commit subject line."
+        },
+        "commitWizard.customPrompt": {
+          "type": "string",
+          "default": "",
+          "markdownDescription": "Additional instructions appended to the AI prompt. Example: `Always mention the ticket number in the scope.`"
         }
       }
     }
   },
   "scripts": {
-    "vscode:prepublish": "npm run compile",
-    "compile": "tsc -p ./",
-    "watch": "tsc -watch -p ./",
+    "vscode:prepublish": "node esbuild.js --production",
+    "compile": "node esbuild.js",
+    "watch": "node esbuild.js --watch",
+    "typecheck": "tsc --noEmit",
     "lint": "eslint src --ext ts"
   },
   "devDependencies": {
@@ -80,6 +186,7 @@
     "@types/vscode": "^1.85.0",
     "@typescript-eslint/eslint-plugin": "^6.0.0",
     "@typescript-eslint/parser": "^6.0.0",
+    "esbuild": "^0.24.0",
     "eslint": "^8.0.0",
     "typescript": "^5.3.0"
   }

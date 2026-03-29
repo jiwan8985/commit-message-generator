@@ -1,105 +1,105 @@
-# Commit Message Generator
+# Git Commit Wizard
 
-> Instantly generate [Conventional Commits](https://www.conventionalcommits.org/) messages from your staged Git diff — no AI key required.
+> AI-powered [Conventional Commits](https://www.conventionalcommits.org/) generator for VS Code.
+> Works **out of the box with no setup** — AI providers are optional.
+
+---
+
+## Quick Start
+
+1. Stage your files
+2. Click the **✨ button** in the Source Control panel — or press `Cmd+Alt+Enter`
+3. Done ✓
+
+No API key needed. The extension works offline with rule-based analysis by default.
 
 ---
 
 ## Features
 
-- **One-click generation** — click the ✨ button in the Source Control panel or run the command from the palette
-- **Conventional Commits format** — automatically picks the right type: `feat`, `fix`, `docs`, `refactor`, `chore`, `style`, `test`
-- **Smart scope & description** — parses changed file paths and function/class names to fill in scope and description
-- **Zero configuration** — works out of the box with the built-in VS Code Git extension
-- **AI-ready architecture** — the analyzer module is designed to be swapped with a Groq (or any LLM) backend when you're ready
-
----
-
-## Usage
-
-### Source Control panel button
-
-Stage your files, then click the **✨ sparkle icon** in the top-right of the Source Control panel.
-
-### Command Palette
-
-1. `Ctrl+Shift+P` (or `Cmd+Shift+P` on macOS)
-2. Type **Generate Commit Message**
-3. Press `Enter`
-
-The commit message input box is filled in automatically.
-
----
-
-## Generated message examples
-
-| Staged change | Generated message |
-|---|---|
-| New `src/auth/login.ts` with `function loginUser` | `feat(auth): add loginUser` |
-| Edit `src/api/users.ts` with "fix null error" in diff | `fix(api): fix issues in users` |
-| Edit `README.md` | `docs: update README` |
-| Edit `package.json` | `chore: update package.json` |
-| Edit `src/components/Button.scss` | `style(components): update styles in Button` |
-| Edit `src/__tests__/auth.test.ts` | `test: add tests for auth` |
-
----
-
-## Type detection rules
-
-| Priority | Condition | Type |
+| | Feature | Default |
 |---|---|---|
-| 1 | Path contains `test`, `spec`, or `__tests__` | `test` |
-| 2 | All files are `.md / .rst / .txt` or under `docs/` | `docs` |
-| 3 | All files are `package.json`, `*.yaml`, config files | `chore` |
-| 4 | All files are `.css / .scss / .sass / .less` | `style` |
-| 5 | Diff contains `fix`, `bug`, `error`, `crash` … | `fix` |
-| 6 | Any file is newly created | `feat` |
-| 7 | Diff contains `refactor`, `rename`, `extract` … | `refactor` |
-| 8 | (default) | `feat` |
+| ✅ | One-click commit message generation | |
+| ✅ | [Conventional Commits](https://www.conventionalcommits.org/) format | |
+| ✅ | Works offline, zero config | ● |
+| ✅ | AI providers: Anthropic, OpenAI, Groq, Ollama | optional |
+| ✅ | Multiple AI suggestions — pick the best one | |
+| ✅ | Edit before applying | |
+| ✅ | [Gitmoji](https://gitmoji.dev/) support | optional |
+| ✅ | Generate in any language | optional |
+| ✅ | Custom AI prompt | optional |
+| ✅ | Status bar — shows active provider | |
+| ✅ | Keyboard shortcut `Cmd+Alt+Enter` | |
+
+---
+
+## AI Providers (Optional)
+
+The extension defaults to **rule-based** mode — no API key, no internet, works instantly.
+
+When you want smarter results, switch to an AI provider:
+
+| Provider | Cost | Privacy | How to get a key |
+|----------|------|---------|-----------------|
+| **Groq** | Free tier | Cloud | [console.groq.com](https://console.groq.com/) |
+| **Anthropic Claude** | Paid | Cloud | [console.anthropic.com](https://console.anthropic.com/) |
+| **OpenAI GPT** | Paid | Cloud | [platform.openai.com](https://platform.openai.com/) |
+| **Ollama** | Free | **Local** | [ollama.com](https://ollama.com/) |
+
+### Switch provider
+
+Click the status bar item at the bottom of VS Code, or run:
+
+```
+Git Commit Wizard: Configure AI Provider
+```
+
+The extension will prompt you to enter your API key if needed.
 
 ---
 
 ## Configuration
 
-| Setting | Type | Default | Description |
-|---|---|---|---|
-| `commitMessageGenerator.useAI` | `boolean` | `false` | Use Groq AI instead of rule-based analysis |
-| `commitMessageGenerator.groqApiKey` | `string` | `""` | Your Groq API key (required when `useAI` is `true`) |
+Open Settings (`Cmd+,`) and search for **`commitWizard`**.
 
-> **Note:** AI integration is not yet active in v0.1. The settings are reserved for the upcoming v0.2 release.
-
-Open **Settings** (`Ctrl+,`) and search for `Commit Message Generator` to configure.
+| Setting | Default | Description |
+|---------|---------|-------------|
+| `commitWizard.aiProvider` | `rule-based` | Active provider |
+| `commitWizard.anthropicApiKey` | `""` | Anthropic API key |
+| `commitWizard.anthropicModel` | `claude-3-5-haiku-20241022` | Anthropic model |
+| `commitWizard.openaiApiKey` | `""` | OpenAI API key |
+| `commitWizard.openaiModel` | `gpt-4o-mini` | OpenAI model |
+| `commitWizard.openaiBaseUrl` | `https://api.openai.com/v1` | Base URL (Azure, Together AI, …) |
+| `commitWizard.groqApiKey` | `""` | Groq API key |
+| `commitWizard.groqModel` | `llama-3.1-8b-instant` | Groq model |
+| `commitWizard.ollamaUrl` | `http://localhost:11434` | Ollama server URL |
+| `commitWizard.ollamaModel` | `llama3.2` | Ollama model |
+| `commitWizard.suggestionCount` | `3` | Number of AI suggestions (1–5) |
+| `commitWizard.language` | `English` | Language for commit messages |
+| `commitWizard.useEmoji` | `false` | Add gitmoji prefix |
+| `commitWizard.maxSubjectLength` | `72` | Subject line max length |
+| `commitWizard.customPrompt` | `""` | Extra instructions for AI |
 
 ---
 
-## Extension development
+## How It Works
 
-```bash
-# Install dependencies
-npm install
+### Rule-based (default)
 
-# Compile TypeScript
-npm run compile
+| Priority | Condition | Type |
+|----------|-----------|------|
+| 1 | Path contains `test`, `spec`, `__tests__` | `test` |
+| 2 | All files are `.md / .rst / .txt` or under `docs/` | `docs` |
+| 3 | All files are config files (`*.json`, `*.yaml`, …) | `chore` |
+| 4 | All files are `.css / .scss / .sass / .less` | `style` |
+| 5 | Diff contains `fix`, `bug`, `error`, `crash`… | `fix` |
+| 6 | Any file is newly created | `feat` |
+| 7 | Diff contains `refactor`, `rename`, `extract`… | `refactor` |
+| 8 | (default) | `feat` |
 
-# Watch mode
-npm run watch
+### AI mode
 
-# Press F5 in VS Code to launch the Extension Development Host
-```
-
-### Module structure
-
-```
-src/
-├── extension.ts   # Command registration, Git API wiring
-├── analyzer.ts    # Diff parsing & rule-based type/scope/description detection
-└── formatter.ts   # Conventional Commits string formatter
-```
-
-`analyzer.ts` is the only file you need to replace to add AI support. Its public interface:
-
-```typescript
-export function analyze(diff: string): AnalyzerResult
-```
+The staged diff is sent to the selected AI provider with a structured Conventional Commits prompt. The AI returns up to 5 suggestions; you pick the one you like (or edit it before applying).
 
 ---
 
@@ -110,7 +110,7 @@ export function analyze(diff: string): AnalyzerResult
 
 ---
 
-## Release notes
+## Release Notes
 
 See [CHANGELOG.md](CHANGELOG.md).
 
